@@ -3,11 +3,11 @@ class Cannon {
         //super(scene, x, y, 'cannon');
         scene.add.existing(this);
         //why not scene.add.sprite(this)?
-
+        this.level = level;
         //the question is... how do we add the cannon to the screen?
         
-        this.multiplier1 = Math.floor(Math.random()*(level+3));
-        this.multiplier2 = Math.floor(Math.random()*(level+3))
+        this.multiplier1 = Math.floor(Math.random()*(this.level+3));
+        this.multiplier2 = Math.floor(Math.random()*(this.level+3))
         this.problemText = scene.add.text(x-50, y-20, this.multiplier1 + " x " + this.multiplier2, {
             font: "40px Arial",
             fill: "#e3fae9",
@@ -24,9 +24,9 @@ class Cannon {
         //cannon ball is its own class
     }
 
-    generateNewProblem(level){
-        this.multiplier1 = Math.floor(Math.random()*(level+3));
-        this.multiplier2 = Math.floor(Math.random()*(level+3));
+    generateNewProblem(){
+        this.multiplier1 = Math.floor(Math.random()*(this.level+3));
+        this.multiplier2 = Math.floor(Math.random()*(this.level+3));
         this.problemText.text = this.multiplier1 + " x " + this.multiplier2;
         this.solution = this.multiplier1 * this.multiplier2;
         
