@@ -2,12 +2,21 @@ class Cannon {
     constructor(scene, x, y, level){
         //super(scene, x, y, 'cannon');
         scene.add.existing(this);
-        //why not scene.add.sprite(this)?
         this.level = level;
+        this.scene = scene;
+        this.x = x;
+        this.y = y;
+
+        //this.load.image('cannon','./assets/cannon.png');
+        //why not scene.add.sprite(this)?
+
         //the question is... how do we add the cannon to the screen?
         
         this.multiplier1 = Math.floor(Math.random()*(this.level+3));
-        this.multiplier2 = Math.floor(Math.random()*(this.level+3))
+        this.multiplier2 = Math.floor(Math.random()*(this.level+3));
+        this.sprite = scene.add.sprite(x, y, 'cannon');
+        this.sprite.setScale(.35);
+
         this.problemText = scene.add.text(x-50, y-20, this.multiplier1 + " x " + this.multiplier2, {
             font: "40px Arial",
             fill: "#e3fae9",
@@ -16,12 +25,13 @@ class Cannon {
 
         this.solution = this.multiplier1 * this.multiplier2;
         
-        
     }
 
-    shoot(){
-        //launch cannon ball from cannon.
-        //cannon ball is its own class
+    shoot(number){
+        console.log("Shoot " + number);
+        this.cannonBall = new CannonBall(this.scene, this.x + 80, this.y)
+        this.generateNewProblem();
+        return (this.cannonBall);
     }
 
     generateNewProblem(){
@@ -57,8 +67,6 @@ class Cannon {
         }
     }
     */
-  
-
   
   }
   

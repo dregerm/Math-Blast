@@ -215,12 +215,9 @@ gameScene.create = function(){
     this.background = this.add.image(config.width/2, config.height/2, 'gameSceneBackground');
     this.background.setScale(.6);
     
-    this.cannon1 = this.add.sprite(100, 75, 'cannon');
-    this.cannon1.setScale(.35);
-    this.cannon2 = this.add.sprite(100, 250, 'cannon');
-    this.cannon2.setScale(.35);
-    this.cannon3 = this.add.sprite(100, 425, 'cannon');
-    this.cannon3.setScale(.35);
+    this.cannon1 = new Cannon(gameScene, 100, 75, level);
+    this.cannon2 = new Cannon(gameScene, 100, 250, level);
+    this.cannon3 = new Cannon(gameScene, 100, 425, level);
 
     this.scoreBox = this.add.sprite(config.width/2,575,'scoreBox');
     this.scoreBox.setScale(.25)
@@ -229,49 +226,15 @@ gameScene.create = function(){
         fill: "#e3fae9",
         align: "center"
     });
-    //let possibleMultipliers = [];
-    //for (let i = 0; i<level+3; i++){
-    //    possibleMultipliers.append(i)
-    //}
 
-    let multiplier1 = Math.floor(Math.random()*(level+3))
-    let multiplier2 = Math.floor(Math.random()*(level+3))
-    let multiplier3 = Math.floor(Math.random()*(level+3))
-    let multiplier4 = Math.floor(Math.random()*(level+3))
-    let multiplier5 = Math.floor(Math.random()*(level+3))
-    let multiplier6 = Math.floor(Math.random()*(level+3))
-    
-    this.mathProblem1 = this.add.text(50, 55, multiplier1 + " x " + multiplier2, {
-        font: "40px Arial",
-        fill: "#e3fae9",
-        align: "center",
-        
-    });
-    let solution1 = multiplier1 * multiplier2;
-
-    this.mathProblem2 = this.add.text(50, 230, multiplier3 + " x " + multiplier4, {
-        font: "40px Arial",
-        fill: "#e3fae9",
-        align: "center"
-    });
-    let solution2 = multiplier3 * multiplier4;
-    
-    this.mathProblem3 = this.add.text(50, 405, multiplier5 + " x " + multiplier6, {
-        font: "40px Arial",
-        fill: "#e3fae9",
-        align: "center"
-    });
-    let solution3 = multiplier5 * multiplier6;
-
-    let solutionList = [solution1, solution2, solution3];
+    let solutionList = [this.cannon1.solution, this.cannon2.solution, this.cannon3.solution];
 
     let answer = "";
     //Their Guess at a solution that is checked against the existing problems
-    let answerText = this.add.text(460, 560, 'Answer', {
-        font: "25px Arial",
+    let answerText = this.add.text(480, 550, 'Answer', {
+        font: "40px Arial",
         fill: "#e3fae9",
         align: "center",
-        
     });
     
     var keyObj = gameScene.input.keyboard.addKey('ONE');  // Get key object
@@ -376,42 +339,38 @@ gameScene.create = function(){
         for (let i = 0; i< solutionList.length; i++){
             if (parseInt(answer) == (solutionList[i])){
                 if (i == 0){
-                    console.log("Shoot 1");
-                    shoot(this.cannon1, gameScene);
+                    gameScene.cannonBall1 = gameScene.cannon1.shoot(1);
                 }
                 else if (i == 1){
-                    console.log("Shoot 2");
-                    shoot(this.cannon2, gameScene);
+                    gameScene.cannonBall2 =gameScene.cannon2.shoot(2);
                 }
                 else if (i == 2){
-                    console.log("Shoot 3");
-                    shoot(this.cannon3, gameScene);
+                    gameScene.cannonBall3 = gameScene.cannon3.shoot(3);
                 }
             }
         }
+        
+        solutionList = [gameScene.cannon1.solution, gameScene.cannon2.solution, gameScene.cannon3.solution];
         answer = '';
         answerText.text = answer;
+        
     });
     
 }
 
-function shoot(cannon, scene){
-
-    let multiplier1 = Math.floor(Math.random()*(level+3))
-    let multiplier2 = Math.floor(Math.random()*(level+3))
-    let multiplier3 = Math.floor(Math.random()*(level+3))
-    let multiplier4 = Math.floor(Math.random()*(level+3))
-    let multiplier5 = Math.floor(Math.random()*(level+3))
-    let multiplier6 = Math.floor(Math.random()*(level+3))
-
-    
-    //this.cannon1
-    //add cannonball 
-    //shooting Animation
-}
 
 //have a score that increases, and decreases when you dont make it.
 gameScene.update = function(time, delta) {
-    
 
+    /*
+    this.cannonBall1.x = this.cannonBall1.x + (10 * 1/1000 * delta);
+    
+    this.cannonBall2.x = this.cannonBall2.x + (10 * 1/1000 * delta);
+    
+    
+    this.cannonBall3.x = this.cannonBall3.x + (10 * 1/1000 * delta);
+        
+    
+*/
+    
 }
