@@ -364,13 +364,7 @@ gameScene.update = function(time, delta) {
 
     /*
     this.cannonBall1.x = this.cannonBall1.x + (10 * 1/1000 * delta);
-    
     this.cannonBall2.x = this.cannonBall2.x + (10 * 1/1000 * delta);
-    
-    
     this.cannonBall3.x = this.cannonBall3.x + (10 * 1/1000 * delta);
-        
-    
-*/
-    
+    */   
 }
