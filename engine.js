@@ -13,7 +13,7 @@ let config = {
         default:"arcade",
         arcade:{
             debug: true,
-            gravity: {y:2500}
+            gravity: {y:0}
         }
     }
 }
@@ -231,7 +231,6 @@ gameScene.create = function(){
     });
 
     let solutionList = [this.cannon1.solution, this.cannon2.solution, this.cannon3.solution];
-
     let answer = "";
 
     //Their Guess at a solution that is checked against the existing problems
@@ -241,20 +240,22 @@ gameScene.create = function(){
         align: "center",
     });
 
-/*
+
+    /*
     this.keyObjectList = [['ONE', '1'], ['TWO', '2'], ['THREE', '3'], ['FOUR', '4'], ['FIVE', '5'], ['SIX', '6'], ['SEVEN', '7'], ['EIGHT', '8'], ['NINE', '9'], ['ZERO', '0']];
     
     for (let i = 0; i < this.keyObjectList.length; i++){
-        var keyObj = gameScene.input.keyboard.addKey(i[0]);
+        var keyObj = gameScene.input.keyboard.addKey(this.keyObjectList[i[0]]);
         keyObj.on('down', function(event) {
             if (answer.length == 0){
                 answerText.text = '';
             }
-            answer = answer + i[1];
+            answer = answer + this.keyObjectList[i[1]];
             answerText.text = answer;   
         });
     }
     */
+    
     
     
     var keyObj = gameScene.input.keyboard.addKey('ONE');  // Get key object
@@ -350,10 +351,7 @@ gameScene.create = function(){
     });
 
     
-   
     
-    //make a loop thing that just creates the key object when given keyboard press and what should be added
-    //to the answer.
     this.ghosts = [];
     this.cannonBalls = [];
     var keyObj = gameScene.input.keyboard.addKey('ENTER');  // Get key object
@@ -363,107 +361,124 @@ gameScene.create = function(){
         for (let i = 0; i< solutionList.length; i++){
             if (parseInt(answer) == (solutionList[i])){
                 if (i == 0){
-                    gameScene.cannonBalls.push(gameScene.cannon1.shoot(1));
+                    gameScene.physics.add.collider(gameScene.cannon1.shoot(1), gameScene.ghosts1[0], destroy);
                 }
                 else if (i == 1){
-                    gameScene.cannonBalls.push(gameScene.cannon2.shoot(2));
+                    gameScene.physics.add.collider(gameScene.cannon2.shoot(2), gameScene.ghosts2[0], destroy);
                 }
                 else if (i == 2){
-                    gameScene.cannonBalls.push(gameScene.cannon3.shoot(3));
+                    gameScene.physics.add.collider(gameScene.cannon3.shoot(3), gameScene.ghosts3[0], destroy);
                 }
             }
         }
-        
         solutionList = [gameScene.cannon1.solution, gameScene.cannon2.solution, gameScene.cannon3.solution];
         answer = '';
         answerText.text = answer;
         
     });
-    let yRand = 0;
-    let floor = Math.floor(Math.random() * 3);
 
-    if (floor == 0){
-        yRand = 425;
-    }
-    else if(floor == 1){
-        yRand = 250;
-    }
-    else{
-        yRand = 75;
+
+
+
+    this.ghosts = [];
+    this.ghosts1 = [];
+    this.ghosts2 = [];
+    this.ghosts3 = [];
+
+    destroy = function(cannonBall, ghost){
+        if (cannonBall.y == 75) {
+            console.log('cannon1');
+            gameScene.ghosts1.shift();
+        }
+        if (cannonBall.y == 250) {
+            gameScene.ghosts2.shift();
+        }
+        if (cannonBall.y == 425) {
+            gameScene.ghosts3.shift();
+        }
+        cannonBall.collide();
+        ghost.collide();
     }
 
-    this.ghost = new Ghost(this, 1100, yRand);
-    this.ghost.setScale(.2);
-    this.ghosts.push(this.ghost);
+    this.createGhost = function(){
+        let floor = Math.floor(Math.random() * 3) + 1;
+        if (floor == 3){
+            gameScene.ghost = new Ghost(gameScene, 1100, 425);
+            gameScene.ghost.setScale(.2);
+            gameScene.ghosts3.push(gameScene.ghost);
+        }
+        else if(floor == 2){
+            gameScene.ghost = new Ghost(gameScene, 1100, 250);
+            gameScene.ghost.setScale(.2);
+            gameScene.ghosts2.push(gameScene.ghost);
+        }
+        else{
+            gameScene.ghost = new Ghost(gameScene, 1100, 75);
+            gameScene.ghost.setScale(.2);
+            gameScene.ghosts1.push(gameScene.ghost);
+        }
+        gameScene.ghosts = [gameScene.ghosts1, gameScene.ghosts2, gameScene.ghosts3];
+    }
+    
 
+    this.createGhost();
     
 }
 
 
 gameScene.ghostSpawning = false;
-gameScene.difficultyValue = 3500;
+gameScene.difficultyValue = 4000;
 
 
 gameScene.update = function(time, delta) {
 
-
-    //idea to hard code spawn first ghost at beginning.
-    for(let i =0; i < this.cannonBalls.length; i++){
-        this.cannonBalls[i].update(time,delta);
-        if (this.cannonBalls[i].x > 1000){
-            this.cannonBalls[i].destroy();
-            this.cannonBalls.splice(i,i);
+    for(let i = 0; i < this.cannonBalls.length; i++){
+        if (this.cannonBalls[i].x > 1500){
+            this.cannnoBalls[i].destroy()
+            this.cannonBalls[i].splice(i,i);
         }
     }
+    
+    //if time between 2 values... set spawn rate to faster... then when time passes certain point set it to slower....
 
+    if(time > 5000 && time < 6000){
+        this.difficultyValue = 3000;
+    }else{
+        this.difficultyValue = 4000;
+    }
+    
+    //Starts a new time interval at the end of which, a ghost will spawn
     if (!this.ghostSpawning){
-        this.ghostSpawnInterval = time + this.difficultyValue; //want to make this random somehow...
+        this.ghostSpawnInterval = time + this.difficultyValue + (Math.random() * 1000);
         this.ghostSpawning = true;
     }
-
+    
+    //When the end of the spawning interval is reached, this spawns a new ghost
     if (time > this.ghostSpawnInterval){
-        let yRand = 0;
-        let floor = Math.floor(Math.random() * 3);
-        if (floor == 0){
-            yRand = 425;
-        }
-        else if(floor == 1){
-            yRand = 250;
-        }
-        else{
-            yRand = 75;
-        }
-        this.ghost = new Ghost(this, 1100, yRand)
-        this.ghost.setScale(.2)
-        this.ghosts.push(this.ghost);
-        
+        console.log('spawning ghost');
+        this.createGhost();
         this.ghostSpawning = false;
     }
+    
 
-    for(let i =0; i < this.ghosts.length; i++){
-        this.ghosts[i].update(time,delta);
-    }
+    //NOTES FOR NEXT TIME!!!
+    //Ghost spanwing in waves - down times and intense times
+    //Make the end to each level
+    //Do something with the ghosts when they reach the cannons (Hearts? Kill them? Lose points?)
+    //Score system
 
-    for(let i =0; i < this.cannonBalls.length; i++){
-        for(let j =0; j < this.ghosts.length; j++){
-            if(this.cannonBalls[i].y == this.ghosts[j].y){
-                if(this.ghosts[j].x - this.cannonBalls[i].x < 50){
+    //need to set up the scoring system in which you gain points
+    //from destroying ghosts, and lose points for ghost hitting cannon
+    //but doesnt actually mean anything...
 
-                    //create destroy ghosts and cannonball methods within their respective classes
-                    this.cannonBalls[i].destroy();
-                    this.cannonBalls.splice(i,i);
-                    this.ghosts[j].destroy();
-                    this.ghosts.splice(j,j);
-                }
-            }
-        }
-    }
+    //nuke button?
 
-    //in the current state everything works KINDA!!! 
-    //is super buggy and things are not working great...
-    //we need to try and figure out better collision detection and
-    //need to figure out better ghost spawning mechanic
-    //potentially use physics as collision detection
+    //difficulty selector?
+
+    //THE CANNON BALL GOES ON FOREVER (If it goes out of the screen without killing a ghost)
+    //Michael personal note: photo ID - song*
+    //Sawyer Personal Note: ****DON"T TELL ANYONE*** ***TOP SECRET*** M1cha31 $uck$ ****DON"T TELL ANYONE*** ***TOP SECRET*** 
+     //Michael personal note in response to sawyer personal note: :'(
 
 
 }

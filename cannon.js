@@ -1,9 +1,11 @@
 
 
-class Cannon extends Phaser.GameObjects.Sprite{
+class Cannon extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, level){
         super(scene, x, y, 'cannon');
         scene.add.existing(this);
+        scene.physics.add.existing(this);
+        
         this.level = level;
         this.scene = scene;
         this.x = x;
@@ -12,7 +14,6 @@ class Cannon extends Phaser.GameObjects.Sprite{
         this.multiplier1 = Math.floor(Math.random()*(this.level+3));
         this.multiplier2 = Math.floor(Math.random()*(this.level+3));
         
-
         this.problemText = scene.add.text(x-50, y-20, this.multiplier1 + " x " + this.multiplier2, {
             font: "40px Arial",
             fill: "#e3fae9",
@@ -35,35 +36,8 @@ class Cannon extends Phaser.GameObjects.Sprite{
         this.multiplier2 = Math.floor(Math.random()*(this.level+3));
         this.problemText.text = this.multiplier1 + " x " + this.multiplier2;
         this.solution = this.multiplier1 * this.multiplier2;
-        
     }
 
-    /*
-        so essentially, the process in engine.js goes like so...
-
-        create 3 cannons...
-
-        then when press enter...
-        if guess (from gamescene) == cannon.solution{
-            cannon.shoot();
-            cannon.generateNewProblem();
-        }
-
-    */ 
-
-    // do not think we check the guess here...
-    //the cannon property has the SOLUTION but not the guess. the guess is a property within the gamescene
-    
-    /*checkSolution(guess){
-        if (parseInt(guess) == this.solution){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    */
-  
   }
   
     
