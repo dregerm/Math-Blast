@@ -15,7 +15,6 @@ class CannonBall extends Phaser.Physics.Arcade.Sprite {
 
     collide(){
         this.destroy();
-        
         //Add explosion image or some animation
     }
 

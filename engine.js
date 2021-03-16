@@ -90,6 +90,7 @@ startScene.create = function() {
 }
 
 
+var timesPlayed = 0;
 
 menuScene.preload = function() {
     this.load.image('background','./assets/middle_background.png')
@@ -131,6 +132,23 @@ menuScene.create = function() {
     this.button9.setScale(.2);
     this.button10 = this.add.sprite(800, 450, 'button10');
     this.button10.setScale(.2);
+
+    if (timesPlayed == 0){
+        this.menuText = this.add.text(config.width/2 - 125, 50, 'Select Level', {
+            font: "50px Arial", 
+            fill: "#f50a0a",
+            align: "center",
+        });
+    }
+    else{
+        this.menuText = this.add.text(config.width/2 - 260, 50, 'YOU WON!!!! play again?', {
+            font: "50px Arial", 
+            fill: "#f50a0a",
+            align: "center",
+        });
+    }
+    
+    
     
     function createTweens(item,scaleXSmall, scaleYSmall, scaleXBig, scaleYBig){
         item.onClickTween = menuScene.tweens.add({
@@ -197,6 +215,11 @@ menuScene.create = function() {
     } 
 }
 
+
+
+
+
+
 gameScene.preload = function(){
     this.load.image('gameSceneBackground', './assets/game_background.png');
     this.load.image('redHeart', './assets/red_heart.png');
@@ -207,14 +230,18 @@ gameScene.preload = function(){
     this.load.image('scoreBox','./assets/score_box.png')
 }
 
-
-
+var scoreCount = 0;
+var solutionList = [];
+var globalAnswer;
 
 
 gameScene.create = function(){
+    this.timePassed = 0;
+    
+
     this.background = this.add.image(config.width/2, config.height/2, 'gameSceneBackground');
     this.background.setScale(.6);
-    
+
     this.cannon1 = new Cannon(gameScene, 100, 75, level);
     this.cannon2 = new Cannon(gameScene, 100, 250, level);
     this.cannon3 = new Cannon(gameScene, 100, 425, level);
@@ -222,216 +249,282 @@ gameScene.create = function(){
     this.cannon2.setScale(.35);
     this.cannon3.setScale(.35);
 
+    solutionList = [this.cannon1.solution, this.cannon2.solution, this.cannon3.solution];
+        
     this.scoreBox = this.add.sprite(config.width/2,575,'scoreBox');
     this.scoreBox.setScale(.25)
+
     this.level = this.add.text(850, 15, "level: " + level, {
-        font: "20px Arial",
-        fill: "#e3fae9",
-        align: "center"
+    font: "20px Arial",
+    fill: "#e3fae9",
+    align: "center",
     });
-
-    let solutionList = [this.cannon1.solution, this.cannon2.solution, this.cannon3.solution];
-    let answer = "";
-
-    //Their Guess at a solution that is checked against the existing problems
-    let answerText = this.add.text(480, 550, 'Answer', {
+    
+    this.startText = this.add.text(config.width/2 - 50, 250, 'READY...', {
+    font: "60px Arial", 
+    fill: "#f50a0a",
+    align: "center",
+    });
+    
+    this.answer = " ";
+    this.answerText = this.add.text(430, 550, 'Answer', {
         font: "40px Arial",
         fill: "#e3fae9",
         align: "center",
     });
-
-
-    /*
-    this.keyObjectList = [['ONE', '1'], ['TWO', '2'], ['THREE', '3'], ['FOUR', '4'], ['FIVE', '5'], ['SIX', '6'], ['SEVEN', '7'], ['EIGHT', '8'], ['NINE', '9'], ['ZERO', '0']];
     
-    for (let i = 0; i < this.keyObjectList.length; i++){
-        var keyObj = gameScene.input.keyboard.addKey(this.keyObjectList[i[0]]);
-        keyObj.on('down', function(event) {
-            if (answer.length == 0){
-                answerText.text = '';
-            }
-            answer = answer + this.keyObjectList[i[1]];
-            answerText.text = answer;   
-        });
-    }
-    */
-    
-    
-    
-    var keyObj = gameScene.input.keyboard.addKey('ONE');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '1';
-        answerText.text = answer;
-        
+    this.scoreText = this.add.text(750, 575, 'Score: ' + scoreCount, {
+        font: "35px Arial", 
+        fill: "#e3fae9",
+        align: "center",
     });
-
-    var keyObj = gameScene.input.keyboard.addKey('TWO');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '2';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('THREE');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '3';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('FOUR');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '4';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('FIVE');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '5';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('SIX');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '6';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('SEVEN');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '7';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('EIGHT');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '8';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('NINE');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '9';
-        answerText.text = answer;
-        
-    });
-    var keyObj = gameScene.input.keyboard.addKey('ZERO');  // Get key object
-    keyObj.on('down', function(event) {
-        if (answer.length == 0){
-            answerText.text = '';
-        }
-        answer = answer + '0';
-        answerText.text = answer;
-        
-    });
-
-    
-    
-    this.ghosts = [];
-    this.cannonBalls = [];
-    var keyObj = gameScene.input.keyboard.addKey('ENTER');  // Get key object
-    keyObj.on('down', function(event) {
-    
-        //check if is part of solutionList
-        for (let i = 0; i< solutionList.length; i++){
-            if (parseInt(answer) == (solutionList[i])){
-                if (i == 0){
-                    gameScene.physics.add.collider(gameScene.cannon1.shoot(1), gameScene.ghosts1[0], destroy);
-                }
-                else if (i == 1){
-                    gameScene.physics.add.collider(gameScene.cannon2.shoot(2), gameScene.ghosts2[0], destroy);
-                }
-                else if (i == 2){
-                    gameScene.physics.add.collider(gameScene.cannon3.shoot(3), gameScene.ghosts3[0], destroy);
-                }
-            }
-        }
-        solutionList = [gameScene.cannon1.solution, gameScene.cannon2.solution, gameScene.cannon3.solution];
-        answer = '';
-        answerText.text = answer;
-        
-    });
-
-
-
 
     this.ghosts = [];
     this.ghosts1 = [];
     this.ghosts2 = [];
     this.ghosts3 = [];
 
+    this.cannonBalls = [];
+
+    if(timesPlayed == 0){
+        //Their Guess at a solution that is checked against the existing problems
+        
+        var keyObj = gameScene.input.keyboard.addKey('ONE');  // Get key object
+        keyObj.on('down', function(event) {
+            console.log("One Key pressed!");
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '1';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+
+        var keyObj = gameScene.input.keyboard.addKey('TWO');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '2';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('THREE');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '3';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('FOUR');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '4';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('FIVE');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '5';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('SIX');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '6';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('SEVEN');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '7';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('EIGHT');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '8';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('NINE');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '9';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+        var keyObj = gameScene.input.keyboard.addKey('ZERO');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer + '0';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+
+        var keyObj = gameScene.input.keyboard.addKey('BACKSPACE');  // Get key object
+        keyObj.on('down', function(event) {
+            if (gameScene.answer.length == 0){
+                gameScene.answerText.text = '';
+            }
+            gameScene.answer = gameScene.answer.substring(0, gameScene.answer.length - 1)
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+
+        //Probably Shoots a cannonball
+        var keyObj = gameScene.input.keyboard.addKey('ENTER');  // Get key object
+        keyObj.on('down', function(event) {
+            //check if is part of solutionList
+            for (let i = 0; i< solutionList.length; i++){
+                if (parseInt(gameScene.answer) == (solutionList[i])){
+                    if (i == 0){
+                        gameScene.physics.add.collider(gameScene.cannon1.shoot(1), gameScene.ghosts1[0], destroy);
+                    }
+                    else if (i == 1){
+                        gameScene.physics.add.collider(gameScene.cannon2.shoot(2), gameScene.ghosts2[0], destroy);
+                    }
+                    else if (i == 2){
+                        gameScene.physics.add.collider(gameScene.cannon3.shoot(3), gameScene.ghosts3[0], destroy);
+                    }
+                }
+            }
+            solutionList = [gameScene.cannon1.solution, gameScene.cannon2.solution, gameScene.cannon3.solution];
+            globalAnswer = gameScene.answer;
+            gameScene.answer = '';
+            gameScene.answerText.text = gameScene.answer;
+            
+        });
+    }
+    
+
+
     destroy = function(cannonBall, ghost){
-        if (cannonBall.y == 75) {
-            console.log('cannon1');
+        if (cannonBall.x < 1000){
+            if (cannonBall.y == 75) {
+                console.log('cannon1');
+                gameScene.ghosts1.shift();
+            }
+            if (cannonBall.y == 250) {
+                gameScene.ghosts2.shift();
+            }
+            if (cannonBall.y == 425) {
+                gameScene.ghosts3.shift();
+            }
+            cannonBall.collide();
+            ghost.collide();
+            scoreCount = scoreCount + 25;
+            gameScene.scoreText.text = "Score: " + scoreCount;
+
+
+        }
+        
+    }
+
+    ghostCannonCollision = function(cannon, ghost){
+
+        if(ghost.y == 75){
             gameScene.ghosts1.shift();
         }
-        if (cannonBall.y == 250) {
+        if(ghost.y == 250){
             gameScene.ghosts2.shift();
         }
-        if (cannonBall.y == 425) {
+        if(ghost.y == 425){
             gameScene.ghosts3.shift();
         }
-        cannonBall.collide();
         ghost.collide();
+        if (scoreCount > 0){
+            scoreCount = scoreCount - 25;
+            gameScene.scoreText.text = "Score: " + scoreCount;
+        }
+
     }
 
     this.createGhost = function(){
         let floor = Math.floor(Math.random() * 3) + 1;
         if (floor == 3){
-            gameScene.ghost = new Ghost(gameScene, 1100, 425);
+            gameScene.ghost = new Ghost(gameScene, 1250, 425);
             gameScene.ghost.setScale(.2);
+            gameScene.physics.add.overlap(gameScene.cannon3, gameScene.ghost, ghostCannonCollision);
             gameScene.ghosts3.push(gameScene.ghost);
         }
         else if(floor == 2){
-            gameScene.ghost = new Ghost(gameScene, 1100, 250);
+            gameScene.ghost = new Ghost(gameScene, 1250, 250);
             gameScene.ghost.setScale(.2);
+            gameScene.physics.add.overlap(gameScene.cannon2, gameScene.ghost, ghostCannonCollision);
             gameScene.ghosts2.push(gameScene.ghost);
         }
         else{
-            gameScene.ghost = new Ghost(gameScene, 1100, 75);
+            gameScene.ghost = new Ghost(gameScene, 1250, 75);
             gameScene.ghost.setScale(.2);
+            gameScene.physics.add.overlap(gameScene.cannon1, gameScene.ghost, ghostCannonCollision);
             gameScene.ghosts1.push(gameScene.ghost);
+            
         }
         gameScene.ghosts = [gameScene.ghosts1, gameScene.ghosts2, gameScene.ghosts3];
     }
     
+    /*
+    this.matched = function(cannonNumber){
+        console.log("MATCHED HAS BEEN RUN!");
+        this.coloredAnswerText = this.add.text();
+        answerText.text.setColor = "#f50a0a";
+        if (cannonNumber == 1){
+            gameScene.cannon1.problemText.text.setFill = "#f50a0a";
+        }
+        if (cannonNumber == 2){
+            gameScene.cannon2.problemText.setFill = "#f50a0a";
+        }
+        if (cannonNumber == 3){
+            gameScene.cannon3.problemText.setFill = "#f50a0a";
+        }
+    } 
+    */ 
 
-    this.createGhost();
     
 }
 
 
+
 gameScene.ghostSpawning = false;
-gameScene.difficultyValue = 4000;
+gameScene.EASYDIFFICULTY = 3500;
+gameScene.HARDDIFFICULTY = 2500;
+
 
 
 gameScene.update = function(time, delta) {
+    //console.log(this.timePassed);
+    this.timePassed += 10 * delta/1000;
 
+    if(this.timePassed > 70){
+        this.startText.text = ''
+    }else if(this.timePassed > 50){
+        this.startText.text = 'SOLVE!!!'
+    }else if(this.timePassed > 25){
+        this.startText.text = 'SET...'
+    }
+    
+    
     for(let i = 0; i < this.cannonBalls.length; i++){
         if (this.cannonBalls[i].x > 1500){
             this.cannnoBalls[i].destroy()
@@ -441,10 +534,16 @@ gameScene.update = function(time, delta) {
     
     //if time between 2 values... set spawn rate to faster... then when time passes certain point set it to slower....
 
-    if(time > 5000 && time < 6000){
-        this.difficultyValue = 3000;
+    if(this.timePassed > 150 && this.timePassed < 190){
+        this.difficultyValue = this.HARDDIFFICULTY;
     }else{
-        this.difficultyValue = 4000;
+        this.difficultyValue = this.EASYDIFFICULTY;
+    }
+
+    if(this.timePassed > 270 && this.timePassed < 300){
+        this.difficultyValue = this.HARDDIFFICULTY;
+    }else{
+        this.difficultyValue = this.EASYDIFFICULTY;
     }
     
     //Starts a new time interval at the end of which, a ghost will spawn
@@ -459,6 +558,29 @@ gameScene.update = function(time, delta) {
         this.createGhost();
         this.ghostSpawning = false;
     }
+
+    if(scoreCount >= 200){
+        timesPlayed += 1;
+        scoreCount = 0;
+        time = 0;
+        gameScene.scene.start("Menu");
+        
+    }
+       
+    if (this.cannon1.solution == parseInt(globalAnswer)){
+        console.log("Matched 1");
+        //this.matched(1);
+    }
+    if (this.cannon2.solution == parseInt(globalAnswer)){
+        console.log("Matched 2");
+        //this.matched(2);
+    }
+    if (this.cannon3.solution == parseInt(globalAnswer)){
+        console.log("Matched 3");
+        //this.matched(3);
+    }
+    
+    
     
 
     //NOTES FOR NEXT TIME!!!
@@ -480,5 +602,11 @@ gameScene.update = function(time, delta) {
     //Sawyer Personal Note: ****DON"T TELL ANYONE*** ***TOP SECRET*** M1cha31 $uck$ ****DON"T TELL ANYONE*** ***TOP SECRET*** 
      //Michael personal note in response to sawyer personal note: :'(
 
+
+     //first thing is to handel when ghost goes past cannon....
+
+
+     //deal with if cannon ball exists THEN ghost spawns, dont have a collider
+     //score when you kill ghost.
 
 }
