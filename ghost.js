@@ -5,11 +5,11 @@ class Ghost extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.x = x;
         this.setVelocityX(-80);
-        //this is -80!!!
+       
     }
 
     update(time, delta){
-        //check to see if they are at cannon, if so, destroy them and reduce score
+       
     }
 
     collide(){

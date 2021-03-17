@@ -287,7 +287,7 @@ gameScene.create = function(){
     this.cannonBalls = [];
 
     if(timesPlayed == 0){
-        //Their Guess at a solution that is checked against the existing problems
+        
         
         var keyObj = gameScene.input.keyboard.addKey('ONE');  // Get key object
         keyObj.on('down', function(event) {
@@ -392,7 +392,7 @@ gameScene.create = function(){
             
         });
 
-        //Probably Shoots a cannonball
+        
         var keyObj = gameScene.input.keyboard.addKey('ENTER');  // Get key object
         keyObj.on('down', function(event) {
             //check if is part of solutionList
@@ -513,16 +513,26 @@ gameScene.HARDDIFFICULTY = 2500;
 
 
 gameScene.update = function(time, delta) {
-    //console.log(this.timePassed);
+    
     this.timePassed += 10 * delta/1000;
 
-    if(this.timePassed > 70){
-        this.startText.text = ''
-    }else if(this.timePassed > 50){
-        this.startText.text = 'SOLVE!!!'
-    }else if(this.timePassed > 25){
-        this.startText.text = 'SET...'
-    }
+    if (timesPlayed == 0){
+        if(this.timePassed > 70){
+            this.startText.text = ''
+        }else if(this.timePassed > 50){
+            this.startText.text = 'SOLVE!!!'
+        }else if(this.timePassed > 25){
+            this.startText.text = 'SET...'
+        }
+    } else{
+        if(this.timePassed > 30){
+            this.startText.text = ''
+        }else if(this.timePassed > 0){
+            this.startText.text = 'SOLVE!!!'
+        }
+    }   
+
+
     
     
     for(let i = 0; i < this.cannonBalls.length; i++){
@@ -559,14 +569,15 @@ gameScene.update = function(time, delta) {
         this.ghostSpawning = false;
     }
 
-    if(scoreCount >= 200){
+    if(scoreCount >= 300){
         timesPlayed += 1;
         scoreCount = 0;
-        time = 0;
+        this.timePassed = 0;
         gameScene.scene.start("Menu");
         
     }
-       
+      
+    /*
     if (this.cannon1.solution == parseInt(globalAnswer)){
         console.log("Matched 1");
         //this.matched(1);
@@ -579,34 +590,10 @@ gameScene.update = function(time, delta) {
         console.log("Matched 3");
         //this.matched(3);
     }
-    
-    
-    
+    */
 
-    //NOTES FOR NEXT TIME!!!
-    //Ghost spanwing in waves - down times and intense times
-    //Make the end to each level
-    //Do something with the ghosts when they reach the cannons (Hearts? Kill them? Lose points?)
-    //Score system
-
-    //need to set up the scoring system in which you gain points
-    //from destroying ghosts, and lose points for ghost hitting cannon
-    //but doesnt actually mean anything...
-
-    //nuke button?
-
-    //difficulty selector?
-
-    //THE CANNON BALL GOES ON FOREVER (If it goes out of the screen without killing a ghost)
     //Michael personal note: photo ID - song*
     //Sawyer Personal Note: ****DON"T TELL ANYONE*** ***TOP SECRET*** M1cha31 $uck$ ****DON"T TELL ANYONE*** ***TOP SECRET*** 
      //Michael personal note in response to sawyer personal note: :'(
-
-
-     //first thing is to handel when ghost goes past cannon....
-
-
-     //deal with if cannon ball exists THEN ghost spawns, dont have a collider
-     //score when you kill ghost.
 
 }
