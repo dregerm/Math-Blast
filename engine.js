@@ -592,8 +592,6 @@ gameScene.update = function(time, delta) {
     }
     */
 
-    //Michael personal note: photo ID - song*
-    //Sawyer Personal Note: ****DON"T TELL ANYONE*** ***TOP SECRET*** M1cha31 $uck$ ****DON"T TELL ANYONE*** ***TOP SECRET*** 
-     //Michael personal note in response to sawyer personal note: :'(
+    
 
 }
